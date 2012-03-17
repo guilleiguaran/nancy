@@ -36,6 +36,29 @@ module Nancy
       response.redirect(uri, status)
     end
 
+    def self.use(*args, &block)
+      middlewares << [*args, block]
+    end
+
+    def self.middlewares
+      @middlewares ||= []
+    end
+
+    def initialize
+      klass = self.class
+      @app = Rack::Builder.new do
+        klass.middlewares.each do |middleware|
+          *args, block = middleware[0], middleware[1]
+          use(*args){ yield block if block}
+        end
+        run klass
+      end
+    end
+
+    def call(env)
+      @app.call(env)
+    end
+
     def self.call(env)
       Thread.current[:request] = Rack::Request.new(env)
       Thread.current[:params] = request.params
