@@ -3,7 +3,7 @@ require 'tilt'
 
 module Nancy
   class Base
-    REQUEST_METHODS = ["GET", "POST", "PATCH", "PUT", "DELETE"]
+    REQUEST_METHODS = %w(GET POST PATCH PUT DELETE)
 
     class << self
       REQUEST_METHODS.each do |verb|
@@ -26,18 +26,16 @@ module Nancy
       @route_set ||= Hash.new { |h, k| h[k] = [] }
     end
 
-    def self.request
-      Thread.current[:request]
-    end
-
-    def self.params
-      Thread.current[:params]
+    class << self
+      %w(request response params).each do |accessor|
+        define_method(accessor){ Thread.current[accessor.to_sym] }
+      end
     end
 
     def self.call(env)
       Thread.current[:request] = Rack::Request.new(env)
       Thread.current[:params] = request.params
-      response = Rack::Response.new
+      Thread.current[:response] = Rack::Response.new
       route_set[request.request_method].each do |matcher, block|
         if match = request.path_info.match(matcher[0])
           if (captures = match.captures) && !captures.empty?
