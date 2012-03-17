@@ -32,6 +32,10 @@ module Nancy
       end
     end
 
+    def self.redirect(uri, status = 302)
+      response.redirect(uri, status)
+    end
+
     def self.call(env)
       Thread.current[:request] = Rack::Request.new(env)
       Thread.current[:params] = request.params
