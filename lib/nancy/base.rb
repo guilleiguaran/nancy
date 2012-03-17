@@ -32,6 +32,10 @@ module Nancy
       end
     end
 
+    def self.session
+      request.env["rack.session"]
+    end
+
     def self.redirect(uri, status = 302)
       response.redirect(uri, status)
     end
