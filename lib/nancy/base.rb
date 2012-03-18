@@ -3,10 +3,8 @@ require 'tilt'
 
 module Nancy
   class Base
-    REQUEST_METHODS = %w(GET POST PATCH PUT DELETE)
-
     class << self
-      REQUEST_METHODS.each do |verb|
+      %w(GET POST PATCH PUT DELETE).each do |verb|
         define_method(verb.downcase) do |pattern, &block|
           route_set[verb] << [compile(pattern), block]
         end
@@ -65,12 +63,11 @@ module Nancy
 
     def self.call(env)
       Thread.current[:request] = Rack::Request.new(env)
-      Thread.current[:params] = request.params
       Thread.current[:response] = Rack::Response.new
-      catch(:halt) {
+      Thread.current[:params] = request.params
+      response = catch(:halt) do
         route_eval(request.request_method, request.path_info)
-      }
-      response.finish
+      end.finish
     end
 
     def self.route_eval(request_method, path_info)
@@ -80,10 +77,20 @@ module Nancy
             url_params = Hash[*matcher[1].zip(captures).flatten]
             Thread.current[:params] = url_params.merge(params)
           end
-          throw :halt, response.write(block.call)
+          response.write(block.call)
+          halt response
         end
       end
-      throw :halt, response.status = 404
+      halt 404
+    end
+
+    def self.halt(*res)
+      throw :halt, res.first if res.first.is_a?(Rack::Response)
+      response.status = res.select{|x| x.is_a?(Fixnum)}.first || 200
+      headers = res.select{|x| x.is_a?(Hash)}.first || {}
+      response.header.merge(headers)
+      response.body = [(res.select{|x| x.is_a?(String)}.first || "")]
+      throw :halt, response
     end
 
     def self.render(template, locals = {}, options = {}, &block)
