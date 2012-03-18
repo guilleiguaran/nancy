@@ -1,5 +1,5 @@
-require "nancy/version"
+require 'nancy/base'
+require 'nancy/version'
 
 module Nancy
-  # Your code goes here...
 end
