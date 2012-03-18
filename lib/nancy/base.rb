@@ -1,4 +1,4 @@
-require 'thread'
+require 'rack'
 require 'tilt'
 
 module Nancy
@@ -40,8 +40,8 @@ module Nancy
       response.redirect(uri, status)
     end
 
-    def self.use(*args, &block)
-      middlewares << [*args, block]
+    def self.use(middleware, *args, &block)
+      middlewares << [middleware, *args, block]
     end
 
     def self.middlewares
@@ -52,8 +52,8 @@ module Nancy
       klass = self.class
       @app = Rack::Builder.new do
         klass.middlewares.each do |middleware|
-          *args, block = middleware[0], middleware[1]
-          use(*args){ yield block if block}
+          middleware, *args, block = middleware
+          use(middleware, *args, &block)
         end
         run klass
       end
@@ -81,11 +81,7 @@ module Nancy
       response.finish
     end
 
-    def self.ivars
-      Hash[instance_variables.map{ |name| [name, instance_variable_get(name)] }]
-    end
-
-    def self.render(template, locals = ivars, options = {}, &block)
+    def self.render(template, locals = {}, options = {}, &block)
       Tilt.new(template).render(self, locals, &block)
     end
   end
