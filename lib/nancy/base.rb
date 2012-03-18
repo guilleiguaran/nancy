@@ -34,8 +34,8 @@ module Nancy
       request.env["rack.session"]
     end
 
-    def self.redirect(uri, status = 302)
-      response.redirect(uri, status)
+    def self.redirect(uri)
+      halt 302, {"Location" => uri}
     end
 
     def self.use(middleware, *args, &block)
@@ -88,7 +88,7 @@ module Nancy
       throw :halt, res.first if res.first.is_a?(Rack::Response)
       response.status = res.select{|x| x.is_a?(Fixnum)}.first || 200
       headers = res.select{|x| x.is_a?(Hash)}.first || {}
-      response.header.merge(headers)
+      response.header.merge!(headers)
       response.body = [(res.select{|x| x.is_a?(String)}.first || "")]
       throw :halt, response
     end
