@@ -67,18 +67,23 @@ module Nancy
       Thread.current[:request] = Rack::Request.new(env)
       Thread.current[:params] = request.params
       Thread.current[:response] = Rack::Response.new
-      route_set[request.request_method].each do |matcher, block|
-        if match = request.path_info.match(matcher[0])
+      catch(:halt) {
+        route_eval(request.request_method, request.path_info)
+      }
+      response.finish
+    end
+
+    def self.route_eval(request_method, path_info)
+      route_set[request_method].each do |matcher, block|
+        if match = path_info.match(matcher[0])
           if (captures = match.captures) && !captures.empty?
             url_params = Hash[*matcher[1].zip(captures).flatten]
             Thread.current[:params] = url_params.merge(params)
           end
-          break response.write(block.call)
+          throw :halt, response.write(block.call)
         end
       end
-
-      response.status = 404 if response.empty?
-      response.finish
+      throw :halt, response.status = 404
     end
 
     def self.render(template, locals = {}, options = {}, &block)
