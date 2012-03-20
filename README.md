@@ -1,6 +1,9 @@
 # Nancy
+_Sinatra's little daughter_
 
-"Sinatra's little daughter"
+![Frank and Nancy by classic film scans](http://farm6.staticflickr.com/5212/5386187897_e3155cec68.jpg)
+
+## Description
 
 Minimal microframework for web development inspired in Sinatra
 
@@ -59,7 +62,7 @@ run App.new
 
 You can now run `rackup` and enjoy what you have just created.
 
-Check examples folder for an detailed example.
+Check examples folder for a detailed example.
 
 ## Contributing
 
