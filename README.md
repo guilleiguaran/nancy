@@ -26,7 +26,7 @@ Here's a simple application:
 require "nancy"
 
 class Hello < Nancy::Base
-  use Rack::Session::Cookie
+  use Rack::Session::Cookie # for sessions
 
   get "/" do
     "Hello World"
@@ -47,6 +47,13 @@ class Hello < Nancy::Base
   get "/template" do
     @message = "Hello world"
     render("views/hello.erb")
+  end
+
+  post "/login" do
+    @user = User.find(params['username'])
+    halt 401, "unauthorized" unless @user.authenticate(params['password'])
+    session[:authenticated] = true
+    render("views/layout.erb") { render("views/welcome.erb") }
   end
 end
 ```
