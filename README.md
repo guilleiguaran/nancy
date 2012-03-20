@@ -1,24 +1,65 @@
 # Nancy
 
-TODO: Write a gem description
+"Sinatra's little daughter"
+
+Minimal microframework for web development inspired in Sinatra
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Install the gem:
 
-    gem 'nancy'
+    $ gem install fakeredis
 
-And then execute:
+or add it to your Gemfile:
 
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install nancy
+    gem "fakeredis"
 
 ## Usage
 
-TODO: Write usage instructions here
+Here's a simple application:
+
+```ruby
+# hello.rb
+require "nancy"
+
+class Hello < Nancy::Base
+  use Rack::Session::Cookie
+
+  get "/" do
+    "Hello World"
+  end
+
+  get "/hello" do
+    redirect "/"
+  end
+
+  get "/hello/:name" do
+    "Hello #{params['name']}"
+  end
+
+  post "/hello" do
+    "Hello #{params['name']}"
+  end
+
+  get "/template" do
+    @message = "Hello world"
+    render("views/hello.erb")
+  end
+end
+```
+
+To run it, you can create a `config.ru` file:
+
+``` ruby
+# config.ru
+require "./hello"
+
+run App.new
+```
+
+You can now run `rackup` and enjoy what you have just created.
+
+Check examples folder for an detailed example.
 
 ## Contributing
 
