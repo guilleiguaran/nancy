@@ -1,2 +1,7 @@
 #!/usr/bin/env rake
-require "bundler/gem_tasks"
+
+task :test do
+  Dir.chdir('test'){ ruby('base_test.rb') }
+end
+
+task :default => :test
