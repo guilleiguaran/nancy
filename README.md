@@ -5,17 +5,17 @@ _Sinatra's little daughter_
 
 ## Description
 
-Minimal microframework for web development inspired in Sinatra
+Minimal Ruby microframework for web development inspired in [Sinatra](http://www.sinatrarb.com/)
 
 ## Installation
 
 Install the gem:
 
-    $ gem install fakeredis
+    $ gem install nancy
 
 or add it to your Gemfile:
 
-    gem "fakeredis"
+    gem "nancy"
 
 ## Usage
 
