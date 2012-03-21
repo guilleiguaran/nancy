@@ -55,6 +55,12 @@ class Hello < Nancy::Base
     session[:authenticated] = true
     render("views/layout.erb") { render("views/welcome.erb") }
   end
+
+  get "/users/:id.json" do
+    @user = User.find(params['id'])
+    halt 404 unless @user
+    UserSerializer.new(@user).to_json
+  end
 end
 ```
 
