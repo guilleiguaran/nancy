@@ -44,6 +44,10 @@ class BaseTest < MiniTest::Unit::TestCase
       render("#{view_path}/layout.erb") { render("#{view_path}/view.erb") }
     end
 
+    get "/view_with_option_trim" do
+      render("#{view_path}/view_with_trim.erb", {}, :trim => "%")
+    end
+
     def self.view_path
       File.expand_path("fixtures", Dir.pwd)
     end
@@ -98,5 +102,10 @@ class BaseTest < MiniTest::Unit::TestCase
     get '/layout'
     assert last_response.body.include?("<html>")
     assert last_response.body.include?("Hello from view")
+  end
+
+  def test_send_titl_options_to_render
+    get '/view_with_option_trim'
+    assert_equal "\nhello\n", last_response.body
   end
 end

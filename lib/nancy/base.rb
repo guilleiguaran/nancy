@@ -94,7 +94,7 @@ module Nancy
     end
 
     def self.render(template, locals = {}, options = {}, &block)
-      Tilt.new(template).render(self, locals, &block)
+      Tilt.new(template, options).render(self, locals, &block)
     end
   end
 end
