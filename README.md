@@ -58,6 +58,7 @@ class Hello < Nancy::Base
 
   get "/users/:id.json" do
     @user = User.find(params['id'])
+    response["Content-Type"] = "application/json"
     halt 404 unless @user
     UserSerializer.new(@user).to_json
   end
