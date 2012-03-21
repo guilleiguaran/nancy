@@ -104,7 +104,7 @@ class BaseTest < MiniTest::Unit::TestCase
     assert last_response.body.include?("Hello from view")
   end
 
-  def test_send_titl_options_to_render
+  def test_send_tilt_options_to_render
     get '/view_with_option_trim'
     assert_equal "\nhello\n", last_response.body
   end
