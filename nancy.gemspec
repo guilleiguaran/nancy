@@ -6,7 +6,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["guilleiguaran@gmail.com"]
   gem.description   = %q{Sinatra's little daughter}
   gem.summary       = %q{Ruby Microframework inspired in Sinatra}
-  gem.homepage      = "https://github.com/guilleiguaran/nancy"
+  gem.homepage      = "http://guilleiguaran.github.com/nancy"
 
   gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")

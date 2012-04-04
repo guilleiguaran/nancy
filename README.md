@@ -79,6 +79,28 @@ You can now run `rackup` and enjoy what you have just created.
 
 Check examples folder for a detailed example.
 
+## Features
+
+*  "Sinatra-like" routes: support for get, post, put, patch, delete
+*  Template rendering and caching through Tilt
+*  Include middlewares with the use method
+*  Sessions through Rack::Session
+*  Halt execution at any point using Ruby's throw/catch mechanism
+*  Thread-safe
+
+## Version history
+
+### 0.1.0
+*   Created a new [Github Page](http://guilleiguaran.github.com/nancy) for the project
+*   Added env accessor, this add support for [Shield](https://github.com/cyx/shield)
+*   Added support for templates caching using Tilt::Cache
+*   Moved render method from Nancy::Base to Nancy::Render module
+*   Refactored Nancy::Base to evaluate code blocks at instance level
+*   Fixed passing of render options to Tilt (thanks to [lporras](https://github.com/lporras))
+
+### 0.0.1
+*   Initial Release
+
 ## Contributing
 
 1. Fork it
