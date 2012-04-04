@@ -27,6 +27,7 @@ require "nancy"
 
 class Hello < Nancy::Base
   use Rack::Session::Cookie # for sessions
+  include Nancy::Render # for templates
 
   get "/" do
     "Hello World"
