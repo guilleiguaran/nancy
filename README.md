@@ -6,7 +6,7 @@ _Sinatra's little daughter_
 
 ## Description
 
-Minimal Ruby microframework for web development inspired in [Sinatra](http://www.sinatrarb.com/)
+Minimal Ruby microframework for web development inspired in [Sinatra](http://www.sinatrarb.com/) and [Cuba](https://github.com/soveran/cuba)
 
 
 ## Installation
