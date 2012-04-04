@@ -21,7 +21,7 @@ or add it to your Gemfile:
 
 Here's a simple application:
 
-```ruby
+``` ruby
 # hello.rb
 require "nancy"
 
