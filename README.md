@@ -3,9 +3,11 @@ _Sinatra's little daughter_
 
 ![Frank and Nancy by classic film scans](http://farm6.staticflickr.com/5212/5386187897_e3155cec68.jpg)
 
+
 ## Description
 
 Minimal Ruby microframework for web development inspired in [Sinatra](http://www.sinatrarb.com/)
+
 
 ## Installation
 
@@ -17,11 +19,12 @@ or add it to your Gemfile:
 
     gem "nancy"
 
+
 ## Usage
 
 Here's a simple application:
 
-``` ruby
+```ruby
 # hello.rb
 require "nancy"
 
@@ -68,7 +71,7 @@ end
 
 To run it, you can create a `config.ru` file:
 
-``` ruby
+```ruby
 # config.ru
 require "./hello"
 
@@ -79,6 +82,7 @@ You can now run `rackup` and enjoy what you have just created.
 
 Check examples folder for a detailed example.
 
+
 ## Features
 
 *  "Sinatra-like" routes: support for get, post, put, patch, delete
@@ -88,9 +92,11 @@ Check examples folder for a detailed example.
 *  Halt execution at any point using Ruby's throw/catch mechanism
 *  Thread-safe
 
+
 ## Version history
 
 ### 0.1.0
+
 *   Created a new [Github Page](http://guilleiguaran.github.com/nancy) for the project
 *   Added env accessor, this add support for [Shield](https://github.com/cyx/shield)
 *   Added support for templates caching using Tilt::Cache
@@ -99,7 +105,9 @@ Check examples folder for a detailed example.
 *   Fixed passing of render options to Tilt (thanks to [lporras](https://github.com/lporras))
 
 ### 0.0.1
+
 *   Initial Release
+
 
 ## Contributing
 
