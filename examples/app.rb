@@ -1,11 +1,13 @@
 $:.push File.expand_path("../../lib", __FILE__)
 
 require "nancy/base"
+require "nancy/render"
 
 class App < Nancy::Base
   use Rack::Runtime
   use Rack::Session::Cookie
   use Rack::Static, :urls => ["/javascripts"], :root => "public"
+  include Nancy::Render
 
   get "/" do
     "Hello World"
@@ -57,7 +59,7 @@ class App < Nancy::Base
   end
 
   # Helper method
-  def self.render(*args)
+  def render(*args)
     args[0] = "views/#{args[0]}"
     super(*args)
   end

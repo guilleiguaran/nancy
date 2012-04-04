@@ -5,6 +5,8 @@ class BaseTest < MiniTest::Unit::TestCase
   include Rack::Test::Methods
 
   class TestApp < Nancy::Base
+    include Nancy::Render
+
     get "/" do
       "Hello World"
     end
@@ -48,18 +50,18 @@ class BaseTest < MiniTest::Unit::TestCase
       render("#{view_path}/view_with_trim.erb", {}, :trim => "%")
     end
 
-    def self.view_path
+    def view_path
       File.expand_path("fixtures", Dir.pwd)
     end
   end
 
   def app
-    TestApp
+    TestApp.new
   end
 
   def test_app_respond_with_call
-    assert TestApp.respond_to?(:call)
-    request = Rack::MockRequest.new(TestApp)
+    assert TestApp.new.respond_to?(:call)
+    request = Rack::MockRequest.new(TestApp.new)
     response = request.get('/')
     assert_equal 200, response.status
     assert_equal 'Hello World', response.body
