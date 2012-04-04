@@ -23,7 +23,7 @@ module Nancy
       @route_set ||= Hash.new { |h, k| h[k] = [] }
     end
 
-    %w(request response params).each do |accessor|
+    %w(request response params env).each do |accessor|
       define_method(accessor){ Thread.current[accessor.to_sym] }
     end
 
@@ -58,6 +58,7 @@ module Nancy
       Thread.current[:request] = Rack::Request.new(env)
       Thread.current[:response] = Rack::Response.new
       Thread.current[:params] = request.params
+      Thread.current[:env] = env
       response = catch(:halt) do
         route_eval(request.request_method, request.path_info)
       end.finish
