@@ -6,7 +6,7 @@ require "nancy/render"
 class App < Nancy::Base
   use Rack::Runtime
   use Rack::Session::Cookie
-  use Rack::Static, :urls => ["/javascripts"], :root => "public"
+  use Rack::Static, :urls => ["/js"], :root => "public"
   include Nancy::Render
 
   get "/" do
@@ -56,6 +56,10 @@ class App < Nancy::Base
 
   get "/halt_error" do
     halt 500, "Error fatal"
+  end
+
+  map "/rack" do
+    run lambda{|env| [200, {"Content-Type" => "text/html"}, ["PATH_INFO: #{env["PATH_INFO"]}"]]}
   end
 
   # Helper method

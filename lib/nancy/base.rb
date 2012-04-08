@@ -2,6 +2,7 @@ require 'rack'
 
 module Nancy
   class Base
+    @@builder = Rack::Builder.new
     class << self
       %w(GET POST PATCH PUT DELETE).each do |verb|
         define_method(verb.downcase) do |pattern, &block|
@@ -35,23 +36,20 @@ module Nancy
       halt 302, {"Location" => uri}
     end
 
-    def self.use(middleware, *args, &block)
-      middlewares << [middleware, *args, block]
+    def self.use(*args, &block)
+      @@builder.use(*args, &block)
     end
 
-    def self.middlewares
-      @middlewares ||= []
+    def self.map(*args, &block)
+      @@builder.map(*args, &block)
     end
 
-    def initialize
-      klass = self.class
-      @app = Rack::Builder.new do
-        klass.middlewares.each do |middleware|
-          middleware, *args, block = middleware
-          use(middleware, *args, &block)
-        end
-        run self
-      end
+    def self.inherited(child)
+      child.instance_eval{ @@builder.run(child.new) }
+    end
+
+    def self.call(env)
+      @@builder.dup.call(env)
     end
 
     def call(env)
