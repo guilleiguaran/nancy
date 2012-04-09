@@ -65,6 +65,7 @@ module Nancy
     end
 
     def route_eval(request_method, path_info)
+      path_info = "/#{path_info}" unless path_info[0] == "/"
       self.class.route_set[request_method].each do |matcher, block|
         if match = path_info.match(matcher[0])
           if (captures = match.captures) && !captures.empty?
