@@ -2,7 +2,6 @@ require 'rack'
 
 module Nancy
   class Base
-    @@builder = Rack::Builder.new
     class << self
       %w(GET POST PATCH PUT DELETE).each do |verb|
         define_method(verb.downcase) do |pattern, &block|
@@ -37,19 +36,22 @@ module Nancy
     end
 
     def self.use(*args, &block)
-      @@builder.use(*args, &block)
+      @builder.use(*args, &block)
     end
 
     def self.map(*args, &block)
-      @@builder.map(*args, &block)
+      @builder.map(*args, &block)
     end
 
     def self.inherited(child)
-      child.instance_eval{ @@builder.run(child.new) }
+      child.instance_eval do
+        @builder = Rack::Builder.new
+        @builder.run(child.new)
+      end
     end
 
     def self.call(env)
-      @@builder.dup.call(env)
+      @builder.dup.call(env)
     end
 
     def call(env)

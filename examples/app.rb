@@ -3,10 +3,15 @@ $:.push File.expand_path("../../lib", __FILE__)
 require "nancy/base"
 require "nancy/render"
 
+class MiniApp < Nancy::Base
+  get("/") { "Hello from MiniApp" }
+  get("/:something") { params['something'] }
+end
+
 class App < Nancy::Base
   use Rack::Runtime
   use Rack::Session::Cookie
-  use Rack::Static, :urls => ["/js"], :root => "public"
+  use Rack::Static, urls: ["/js"], root: "public"
   include Nancy::Render
 
   get "/" do
@@ -60,6 +65,10 @@ class App < Nancy::Base
 
   map "/rack" do
     run lambda{|env| [200, {"Content-Type" => "text/html"}, ["PATH_INFO: #{env["PATH_INFO"]}"]]}
+  end
+
+  map "/nancy" do
+    run MiniApp
   end
 
   # Helper method
