@@ -28,7 +28,7 @@ module Nancy
     end
 
     def session
-      request.env["rack.session"]
+      request.env["rack.session"] || raise("Rack::Session handler is missing")
     end
 
     def redirect(uri)
