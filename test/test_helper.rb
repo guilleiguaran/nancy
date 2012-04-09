@@ -7,4 +7,5 @@ $LOAD_PATH.unshift libdir unless $LOAD_PATH.include?(libdir)
 require "rubygems"
 require "nancy"
 require "minitest/unit"
+require "minitest/autorun"
 require "rack/test"

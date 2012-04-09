@@ -1,11 +1,10 @@
 require File.expand_path('../test_helper', __FILE__)
-require "minitest/autorun"
 
 class BaseTest < MiniTest::Unit::TestCase
   include Rack::Test::Methods
 
   class TestApp < Nancy::Base
-    include Nancy::Render
+    use Rack::Session::Cookie
 
     get "/" do
       "Hello World"
@@ -36,32 +35,19 @@ class BaseTest < MiniTest::Unit::TestCase
       "not reached code"
     end
 
-    get "/view" do
-      @message = "Hello from view"
-      render("#{view_path}/view.erb")
-    end
-
-    get "/layout" do
-      @message = "Hello from view"
-      render("#{view_path}/layout.erb") { render("#{view_path}/view.erb") }
-    end
-
-    get "/view_with_option_trim" do
-      render("#{view_path}/view_with_trim.erb", {}, :trim => "%")
-    end
-
-    def view_path
-      File.expand_path("fixtures", Dir.pwd)
+    get "/session" do
+      session['test'] = "test"
+      "session['test'] content is: #{session['test']}"
     end
   end
 
   def app
-    TestApp.new
+    TestApp
   end
 
   def test_app_respond_with_call
     assert TestApp.new.respond_to?(:call)
-    request = Rack::MockRequest.new(TestApp.new)
+    request = Rack::MockRequest.new(TestApp)
     response = request.get('/')
     assert_equal 200, response.status
     assert_equal 'Hello World', response.body
@@ -94,20 +80,8 @@ class BaseTest < MiniTest::Unit::TestCase
     assert_equal 'Internal Error', last_response.body
   end
 
-  def test_render
-    get '/view'
-    assert !last_response.body.include?("<html>")
-    assert last_response.body.include?("Hello from view")
-  end
-
-  def test_render_with_layout
-    get '/layout'
-    assert last_response.body.include?("<html>")
-    assert last_response.body.include?("Hello from view")
-  end
-
-  def test_send_tilt_options_to_render
-    get '/view_with_option_trim'
-    assert_equal "\nhello\n", last_response.body
+  def test_session
+    get '/session'
+    assert_equal "session['test'] content is: test", last_response.body
   end
 end
