@@ -4,8 +4,10 @@ module Nancy
   class Base
     class << self
       %w(GET POST PATCH PUT DELETE HEAD OPTIONS).each do |verb|
-        define_method(verb.downcase) do |pattern, &block|
-          route_set[verb] << [compile(pattern), block]
+        define_method(verb.downcase) do |*args, &block|
+          pattern = args[0]
+          filters = [args[1]].flatten.compact
+          route_set[verb] << [compile(pattern), filters, block]
         end
       end
     end
@@ -66,14 +68,18 @@ module Nancy
 
     def route_eval(request_method, path_info)
       path_info = "/#{path_info}" unless path_info[0] == "/"
-      self.class.route_set[request_method].each do |matcher, block|
+      self.class.route_set[request_method].each do |matcher, filters, block|
         if match = path_info.match(matcher[0])
           if (captures = match.captures) && !captures.empty?
             url_params = Hash[*matcher[1].zip(captures).flatten]
             Thread.current[:params] = url_params.merge(params)
           end
-          response.write instance_eval(&block)
-          halt response
+          catch(:pass) do
+            filters.each { |f| throw :pass unless instance_eval{ send(f) } }
+            response.write instance_eval(&block)
+            halt response
+          end
+          halt 500, "execution halted by filter"
         end
       end
       halt 404
