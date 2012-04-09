@@ -3,7 +3,7 @@ require 'rack'
 module Nancy
   class Base
     class << self
-      %w(GET POST PATCH PUT DELETE).each do |verb|
+      %w(GET POST PATCH PUT DELETE HEAD OPTIONS).each do |verb|
         define_method(verb.downcase) do |pattern, &block|
           route_set[verb] << [compile(pattern), block]
         end
