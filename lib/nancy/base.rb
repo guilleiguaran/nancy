@@ -51,7 +51,7 @@ module Nancy
     end
 
     def self.call(env)
-      @builder.dup.call(env)
+      @builder.to_app.dup.call(env)
     end
 
     def call(env)
