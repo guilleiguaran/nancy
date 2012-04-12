@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Nancy by guilleiguaran</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Nancy</h1>
+        <p>Ruby microframework for web development.</p>
+        <p class="view"><a href="https://github.com/guilleiguaran/nancy">View the Project on GitHub <small>guilleiguaran/nancy</small></a></p>
+        <ul>
+          <li><a href="https://github.com/guilleiguaran/nancy/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/guilleiguaran/nancy/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/guilleiguaran/nancy">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Nancy</h1>
+
+<p><em>Sinatra's little daughter</em></p>
+
+<p><img src="http://farm6.staticflickr.com/5212/5386187897_e3155cec68.jpg" alt="Frank and Nancy by classic film scans"></p>
+
+<h2>Description</h2>
+
+<p>Minimal Ruby microframework for web development inspired in <a href="http://www.sinatrarb.com/">Sinatra</a> and <a href="https://github.com/soveran/cuba">Cuba</a></p>
+
+<h2>Installation</h2>
+
+<p>Install the gem:</p>
+
+<pre><code>$ gem install nancy
+</code></pre>
+
+<p>or add it to your Gemfile:</p>
+
+<pre><code>gem "nancy"
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>Here's a simple application:</p>
+
+<div class="highlight">
+<pre><span class="c1"># hello.rb</span>
+<span class="nb">require</span> <span class="s2">"nancy"</span>
+
+<span class="k">class</span> <span class="nc">Hello</span> <span class="o">&lt;</span> <span class="no">Nancy</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Session</span><span class="o">::</span><span class="no">Cookie</span> <span class="c1"># for sessions</span>
+  <span class="kp">include</span> <span class="no">Nancy</span><span class="o">::</span><span class="no">Render</span> <span class="c1"># for templates</span>
+
+  <span class="n">get</span> <span class="s2">"/"</span> <span class="k">do</span>
+    <span class="s2">"Hello World"</span>
+  <span class="k">end</span>
+
+  <span class="n">get</span> <span class="s2">"/hello"</span> <span class="k">do</span>
+    <span class="n">redirect</span> <span class="s2">"/"</span>
+  <span class="k">end</span>
+
+  <span class="n">get</span> <span class="s2">"/hello/:name"</span> <span class="k">do</span>
+    <span class="s2">"Hello </span><span class="si">#{</span><span class="n">params</span><span class="o">[</span><span class="s1">'name'</span><span class="o">]</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+
+  <span class="n">post</span> <span class="s2">"/hello"</span> <span class="k">do</span>
+    <span class="s2">"Hello </span><span class="si">#{</span><span class="n">params</span><span class="o">[</span><span class="s1">'name'</span><span class="o">]</span><span class="si">}</span><span class="s2">"</span>
+  <span class="k">end</span>
+
+  <span class="n">get</span> <span class="s2">"/template"</span> <span class="k">do</span>
+    <span class="vi">@message</span> <span class="o">=</span> <span class="s2">"Hello world"</span>
+    <span class="n">render</span><span class="p">(</span><span class="s2">"views/hello.erb"</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="n">post</span> <span class="s2">"/login"</span> <span class="k">do</span>
+    <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="s1">'username'</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">halt</span> <span class="mi">401</span><span class="p">,</span> <span class="s2">"unauthorized"</span> <span class="k">unless</span> <span class="vi">@user</span><span class="o">.</span><span class="n">authenticate</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="s1">'password'</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">session</span><span class="o">[</span><span class="ss">:authenticated</span><span class="o">]</span> <span class="o">=</span> <span class="kp">true</span>
+    <span class="n">render</span><span class="p">(</span><span class="s2">"views/layout.erb"</span><span class="p">)</span> <span class="p">{</span> <span class="n">render</span><span class="p">(</span><span class="s2">"views/welcome.erb"</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="n">get</span> <span class="s2">"/users/:id.json"</span> <span class="k">do</span>
+    <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="s1">'id'</span><span class="o">]</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">[</span><span class="s2">"Content-Type"</span><span class="o">]</span> <span class="o">=</span> <span class="s2">"application/json"</span>
+    <span class="n">halt</span> <span class="mi">404</span> <span class="k">unless</span> <span class="vi">@user</span>
+    <span class="no">UserSerializer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span><span class="o">.</span><span class="n">to_json</span>
+  <span class="k">end</span>
+
+  <span class="n">map</span> <span class="s2">"/resque"</span> <span class="k">do</span>
+    <span class="n">run</span> <span class="no">Resque</span><span class="o">::</span><span class="no">Server</span>
+  <span class="k">end</span>
+
+  <span class="n">map</span> <span class="s2">"/nancy"</span> <span class="k">do</span>
+    <span class="n">run</span> <span class="no">AnotherNancyApp</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>To run it, you can create a <code>config.ru</code> file:</p>
+
+<div class="highlight">
+<pre><span class="c1"># config.ru</span>
+<span class="nb">require</span> <span class="s2">"./hello"</span>
+
+<span class="n">run</span> <span class="no">Hello</span>
+</pre>
+</div>
+
+
+<p>You can now run <code>rackup</code> and enjoy what you have just created.</p>
+
+<p>Check examples folder for a detailed example.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li> "Sinatra-like" routes: support for get, post, put, patch, delete, options, head</li>
+<li> Template rendering and caching through Tilt</li>
+<li> Include middlewares with the use method</li>
+<li> Mount rack apps with the map method</li>
+<li> Sessions through Rack::Session</li>
+<li> Halt execution at any point using Ruby's throw/catch mechanism</li>
+<li> Thread-safe</li>
+</ul><h2>Version history</h2>
+
+<h3>0.2.0 (April 12, 2012)</h3>
+
+<ul>
+<li>  Set PATH INFO to '/' when is blank</li>
+<li>  Fixed session method: Raise error when is used but Rack::Session isn't present</li>
+<li>  Added support for HEAD and OPTIONS HTTP verbs</li>
+<li>  Refactored Base.use to use a Rack::Builder internally</li>
+<li>  Added Base.map to redirect requests to Rack sub-apps</li>
+</ul><h3>0.1.0 (April 4, 2012)</h3>
+
+<ul>
+<li>  Created a new <a href="http://guilleiguaran.github.com/nancy">Github Page</a> for the project</li>
+<li>  Added env accessor, this add support for <a href="https://github.com/cyx/shield">Shield</a>
+</li>
+<li>  Added support for templates caching using Tilt::Cache</li>
+<li>  Moved render method from Nancy::Base to Nancy::Render module</li>
+<li>  Refactored Nancy::Base to evaluate code blocks at instance level</li>
+<li>  Fixed passing of render options to Tilt (thanks to <a href="https://github.com/lporras">lporras</a>)</li>
+</ul><h3>0.0.1 (March 20, 2012)</h3>
+
+<ul>
+<li>  Initial Release</li>
+</ul><h2>Contributing</h2>
+
+<ol>
+<li>Fork it</li>
+<li>Create your feature branch (<code>git checkout -b my-new-feature</code>)</li>
+<li>Commit your changes (<code>git commit -am 'Added some feature'</code>)</li>
+<li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
+<li>Create new Pull Request</li>
+</ol><h2>Copyright</h2>
+
+<p>Copyright (c) 2012 Guillermo Iguaran. See LICENSE for
+further details.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/guilleiguaran">guilleiguaran</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
