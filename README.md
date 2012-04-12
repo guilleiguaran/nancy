@@ -104,7 +104,7 @@ Check examples folder for a detailed example.
 
 ## Version history
 
-### 0.2.0 (Unreleased)
+### 0.2.0 (April 12, 2012)
 
 *   Set PATH INFO to '/' when is blank
 *   Fixed session method: Raise error when is used but Rack::Session isn't present
