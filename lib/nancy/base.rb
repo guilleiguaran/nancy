@@ -81,10 +81,9 @@ module Nancy
 
     def halt(*res)
       throw :halt, res.first if res.first.is_a?(Rack::Response)
-      response.status = res.select{|x| x.is_a?(Fixnum)}.first || 200
-      headers = res.select{|x| x.is_a?(Hash)}.first || {}
-      response.header.merge!(headers)
-      response.body = [(res.select{|x| x.is_a?(String)}.first || "")]
+      response.status = res.detect{|x| x.is_a?(Fixnum) } || 200
+      response.header.merge!(res.detect{|x| x.is_a?(Hash) } || {})
+      response.body = [res.detect{|x| x.is_a?(String) } || ""]
       throw :halt, response
     end
   end
