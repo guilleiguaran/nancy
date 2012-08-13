@@ -2,6 +2,8 @@ require 'rack'
 
 module Nancy
   class Base
+    attr_reader :request, :response, :params, :env
+
     class << self
       %w(GET POST PATCH PUT DELETE HEAD OPTIONS).each do |verb|
         define_method(verb.downcase) do |pattern, &block|
@@ -20,11 +22,7 @@ module Nancy
     end
 
     def self.route_set
-      @route_set ||= Hash.new { |h, k| h[k] = [] }
-    end
-
-    %w(request response params env).each do |accessor|
-      define_method(accessor){ Thread.current[accessor.to_sym] }
+      @route_set ||= Hash.new { |hash, key| hash[key] = [] }
     end
 
     def session
@@ -55,10 +53,10 @@ module Nancy
     end
 
     def call(env)
-      Thread.current[:request] = Rack::Request.new(env)
-      Thread.current[:response] = Rack::Response.new
-      Thread.current[:params] = request.params
-      Thread.current[:env] = env
+      @request = Rack::Request.new(env)
+      @response = Rack::Response.new
+      @params = request.params
+      @env = env
       response = catch(:halt) do
         route_eval(request.request_method, request.path_info)
       end.finish
@@ -70,7 +68,7 @@ module Nancy
         if match = path_info.match(matcher[0])
           if (captures = match.captures) && !captures.empty?
             url_params = Hash[*matcher[1].zip(captures).flatten]
-            Thread.current[:params] = url_params.merge(params)
+            @params = url_params.merge(params)
           end
           response.write instance_eval(&block)
           halt response
