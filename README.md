@@ -104,6 +104,10 @@ Check examples folder for a detailed example.
 
 ## Version history
 
+### 0.3.0 (Octuber 3, 2012)
+* Removed unneccesary Thread accessors, use simple instance getters instead
+* Refactored Nancy::Base#halt
+
 ### 0.2.0 (April 12, 2012)
 
 *   Set PATH INFO to '/' when is blank
