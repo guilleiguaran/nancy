@@ -141,5 +141,5 @@ Check examples folder for a detailed example.
 
 ## Copyright
 
-Copyright (c) 2012 Guillermo Iguaran. See LICENSE for
+Copyright (c) 2012-2013 Guillermo Iguaran. See LICENSE for
 further details.
