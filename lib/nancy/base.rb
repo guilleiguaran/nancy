@@ -72,6 +72,10 @@ module Nancy
       end.finish
     end
 
+    def filters
+      self.class.filters
+    end
+
     def route_eval(request_method, path_info)
       path_info = "/" if path_info == ""
       self.class.route_set[request_method].each do |matcher, block|
@@ -80,7 +84,6 @@ module Nancy
             url_params = Hash[*matcher[1].zip(captures).flatten]
             @params = url_params.merge(params)
           end
-          filters = self.class.filters
           instance_exec(&filters[:before]) if filters[:before]
           response.write instance_eval(&block)
           instance_exec(&filters[:after]) if filters[:after]
