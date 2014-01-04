@@ -83,14 +83,13 @@ module Nancy
           instance_exec(&filters[:before]) if filters[:before]
           response.write instance_eval(&block)
           instance_exec(&filters[:after]) if filters[:after]
-          halt response
+          return response
         end
       end
       halt 404
     end
 
     def halt(*res)
-      throw :halt, res.first if res.first.is_a?(Rack::Response)
       response.status = res.detect{|x| x.is_a?(Fixnum) } || 200
       response.header.merge!(res.detect{|x| x.is_a?(Hash) } || {})
       response.body = [res.detect{|x| x.is_a?(String) } || ""]
