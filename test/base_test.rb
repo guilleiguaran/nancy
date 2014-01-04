@@ -1,10 +1,10 @@
 require File.expand_path('../test_helper', __FILE__)
 
-class BaseTest < MiniTest::Unit::TestCase
+class BaseTest < Minitest::Test
   include Rack::Test::Methods
 
   class TestApp < Nancy::Base
-    use Rack::Session::Cookie
+    use Rack::Session::Cookie, secret: "secret"
 
     get "/" do
       "Hello World"
@@ -76,7 +76,7 @@ class BaseTest < MiniTest::Unit::TestCase
 
   def test_halting
     get '/halting'
-    assert 500, last_response.status
+    assert_equal 500, last_response.status
     assert_equal 'Internal Error', last_response.body
   end
 

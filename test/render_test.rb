@@ -1,6 +1,7 @@
 require File.expand_path('../test_helper', __FILE__)
+require 'nancy/render'
 
-class BaseTest < MiniTest::Unit::TestCase
+class BaseTest < Minitest::Test
   include Rack::Test::Methods
 
   class TestApp < Nancy::Base

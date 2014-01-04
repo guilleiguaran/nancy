@@ -20,7 +20,7 @@ class HelloApp < Nancy::Base
   end
 end
 
-class UseTest < MiniTest::Unit::TestCase
+class UseTest < Minitest::Test
 
   def test_use
     request = Rack::MockRequest.new(HelloApp)
