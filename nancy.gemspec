@@ -16,7 +16,8 @@ Gem::Specification.new do |gem|
   gem.version       = Nancy::VERSION
 
   gem.add_dependency 'rack'
-  gem.add_dependency 'tilt'
+  gem.add_development_dependency 'tilt'
+  gem.add_development_dependency 'erubis'
   gem.add_development_dependency 'minitest'
   gem.add_development_dependency 'rack-test'
 end

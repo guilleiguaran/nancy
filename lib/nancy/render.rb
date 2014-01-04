@@ -1,4 +1,9 @@
-require 'tilt'
+begin
+  require 'tilt'
+rescue LoadError => e
+  puts "Please install tilt gem to use Nancy::Render"
+  raise e
+end
 
 module Nancy
   module Render
