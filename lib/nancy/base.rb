@@ -67,7 +67,7 @@ module Nancy
       @response = Rack::Response.new
       @params = request.params
       @env = env
-      response = catch(:halt) do
+      catch(:halt) do
         route_eval(request.request_method, request.path_info)
       end.finish
     end
