@@ -10,6 +10,12 @@ module Nancy
           route_set[verb] << [compile(pattern), block]
         end
       end
+
+      %w(before after).each do |filter|
+        define_method(filter) do |&block|
+          filters[filter.to_sym] = block
+        end
+      end
     end
 
     def self.compile(pattern)
@@ -23,6 +29,10 @@ module Nancy
 
     def self.route_set
       @route_set ||= Hash.new { |hash, key| hash[key] = [] }
+    end
+
+    def self.filters
+      @filters ||= Hash.new
     end
 
     def session
@@ -70,7 +80,10 @@ module Nancy
             url_params = Hash[*matcher[1].zip(captures).flatten]
             @params = url_params.merge(params)
           end
+          filters = self.class.filters
+          instance_exec(&filters[:before]) if filters[:before]
           response.write instance_eval(&block)
+          instance_exec(&filters[:after]) if filters[:after]
           halt response
         end
       end
