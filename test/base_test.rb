@@ -23,7 +23,7 @@ class BaseTest < Minitest::Test
     end
 
     get "/redirect" do
-      redirect "/destination"
+      response.redirect "/destination"
     end
 
     get "/destination" do

@@ -39,10 +39,6 @@ module Nancy
       request.env["rack.session"] || raise("Rack::Session handler is missing")
     end
 
-    def redirect(uri)
-      halt 302, {"Location" => uri}
-    end
-
     def self.use(*args, &block)
       @builder.use(*args, &block)
     end
