@@ -29,15 +29,29 @@ Here's a simple application:
 require "nancy"
 
 class Hello < Nancy::Base
-  use Rack::Session::Cookie # for sessions
+  use Rack::Session::Cookie, secret: ENV['SECRET_TOKEN'] # for sessions
   include Nancy::Render # for templates
+
+  before do
+    if request.path_info == "/protected" && !session[:authenticated]
+      halt 401, "unauthorized"
+    end
+  end
+
+  after do
+    if request.path_info ~= /\.json$/
+      response['Content-Type'] = 'application/json'
+    else
+      response['Content-Type'] = 'text/html'
+    end
+  end
 
   get "/" do
     "Hello World"
   end
 
   get "/hello" do
-    redirect "/"
+    response.redirect "/"
   end
 
   get "/hello/:name" do
@@ -60,9 +74,12 @@ class Hello < Nancy::Base
     render("views/layout.erb") { render("views/welcome.erb") }
   end
 
+  get "/protected" do
+    "Protected area!!!"
+  end
+
   get "/users/:id.json" do
     @user = User.find(params['id'])
-    response["Content-Type"] = "application/json"
     halt 404 unless @user
     UserSerializer.new(@user).to_json
   end
@@ -72,7 +89,7 @@ class Hello < Nancy::Base
   end
 
   map "/nancy" do
-    run AnotherNancyApp
+    run AnotherNancyApp.new
   end
 end
 ```
@@ -83,7 +100,7 @@ To run it, you can create a `config.ru` file:
 # config.ru
 require "./hello"
 
-run Hello
+run Hello.new
 ```
 
 You can now run `rackup` and enjoy what you have just created.
@@ -92,9 +109,10 @@ Check examples folder for a detailed example.
 
 
 ## Features
-
+*  Very fast
 *  "Sinatra-like" routes: support for get, post, put, patch, delete, options, head
-*  Template rendering and caching through Tilt
+*  Template rendering and caching through Tilt or ERB from stdlib
+*  Set basic filters/callbacks with the before/after methods
 *  Include middlewares with the use method
 *  Mount rack apps with the map method
 *  Sessions through Rack::Session
@@ -104,9 +122,18 @@ Check examples folder for a detailed example.
 
 ## Version history
 
+### 0.4.0 (unreleased)
+*   Added support for basic before/after filters
+*   Added Nancy::BasicRender for rendering of templates using ``ERB`` from stdlib
+*   Refactored full code to set proper accessors for all methods
+*   Removed Nancy::Base.call, only instances can be used to run apps
+*   Removed redirect helper, use instead ``response.redirect '/uri'``
+*   Removed ``tilt`` dependency, to use Nancy::Render add it manually to app
+*   Nancy::Base#halt can't be used with a ``Rack::Response`` object anymore
+
 ### 0.3.0 (Octuber 3, 2012)
-* Removed unneccesary Thread accessors, use simple instance getters instead
-* Refactored Nancy::Base#halt
+*   Removed unneccesary Thread accessors, use simple instance getters instead
+*   Refactored Nancy::Base#halt
 
 ### 0.2.0 (April 12, 2012)
 
@@ -141,5 +168,5 @@ Check examples folder for a detailed example.
 
 ## Copyright
 
-Copyright (c) 2012-2013 Guillermo Iguaran. See LICENSE for
+Copyright (c) 2012-2014 Guillermo Iguaran. See LICENSE for
 further details.
