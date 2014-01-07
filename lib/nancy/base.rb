@@ -1,8 +1,13 @@
+require 'forwardable'
 require 'rack'
 
 module Nancy
   class Base
     class << self
+      extend Forwardable
+
+      def_delegators :builder, :map, :use
+
       %w(GET POST PATCH PUT DELETE HEAD OPTIONS).each do |verb|
         define_method(verb.downcase) do |pattern, &block|
           route_set[verb] << [compile(pattern), block]
@@ -19,14 +24,6 @@ module Nancy
       def new(*args, &block)
         builder.run new!(*args, &block)
         builder
-      end
-
-      def use(*args, &block)
-        builder.use(*args, &block)
-      end
-
-      def map(*args, &block)
-        builder.map(*args, &block)
       end
 
       def route_set
