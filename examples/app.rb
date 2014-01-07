@@ -10,7 +10,7 @@ end
 
 class App < Nancy::Base
   use Rack::Runtime
-  use Rack::Session::Cookie
+  use Rack::Session::Cookie, secret: ENV['SECRET']
   use Rack::Static, urls: ["/js"], root: "public"
   include Nancy::Render
 
@@ -68,7 +68,7 @@ class App < Nancy::Base
   end
 
   map "/nancy" do
-    run MiniApp
+    run MiniApp.new
   end
 
   # Helper method
