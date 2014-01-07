@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Nancy by guilleiguaran</title>
-    
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -17,25 +17,31 @@
       <header>
         <h1>Nancy</h1>
         <p>Ruby microframework for web development.</p>
+
         <p class="view"><a href="https://github.com/guilleiguaran/nancy">View the Project on GitHub <small>guilleiguaran/nancy</small></a></p>
+
+
         <ul>
           <li><a href="https://github.com/guilleiguaran/nancy/zipball/master">Download <strong>ZIP File</strong></a></li>
           <li><a href="https://github.com/guilleiguaran/nancy/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/guilleiguaran/nancy">Fork On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/guilleiguaran/nancy">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
-        <h1>Nancy</h1>
+        <h1>
+<a name="nancy" class="anchor" href="#nancy"><span class="octicon octicon-link"></span></a>Nancy</h1>
 
 <p><em>Sinatra's little daughter</em></p>
 
 <p><img src="http://farm6.staticflickr.com/5212/5386187897_e3155cec68.jpg" alt="Frank and Nancy by classic film scans"></p>
 
-<h2>Description</h2>
+<h2>
+<a name="description" class="anchor" href="#description"><span class="octicon octicon-link"></span></a>Description</h2>
 
 <p>Minimal Ruby microframework for web development inspired in <a href="http://www.sinatrarb.com/">Sinatra</a> and <a href="https://github.com/soveran/cuba">Cuba</a></p>
 
-<h2>Installation</h2>
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p>Install the gem:</p>
 
@@ -47,24 +53,38 @@
 <pre><code>gem "nancy"
 </code></pre>
 
-<h2>Usage</h2>
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <p>Here's a simple application:</p>
 
-<div class="highlight">
-<pre><span class="c1"># hello.rb</span>
+<div class="highlight highlight-ruby"><pre><span class="c1"># hello.rb</span>
 <span class="nb">require</span> <span class="s2">"nancy"</span>
 
 <span class="k">class</span> <span class="nc">Hello</span> <span class="o">&lt;</span> <span class="no">Nancy</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Session</span><span class="o">::</span><span class="no">Cookie</span> <span class="c1"># for sessions</span>
+  <span class="n">use</span> <span class="no">Rack</span><span class="o">::</span><span class="no">Session</span><span class="o">::</span><span class="no">Cookie</span><span class="p">,</span> <span class="ss">secret</span><span class="p">:</span> <span class="no">ENV</span><span class="o">[</span><span class="s1">'SECRET_TOKEN'</span><span class="o">]</span> <span class="c1"># for sessions</span>
   <span class="kp">include</span> <span class="no">Nancy</span><span class="o">::</span><span class="no">Render</span> <span class="c1"># for templates</span>
+
+  <span class="n">before</span> <span class="k">do</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">path_info</span> <span class="o">==</span> <span class="s2">"/protected"</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">session</span><span class="o">[</span><span class="ss">:authenticated</span><span class="o">]</span>
+      <span class="n">halt</span> <span class="mi">401</span><span class="p">,</span> <span class="s2">"unauthorized"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">after</span> <span class="k">do</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">path_info</span> <span class="o">~=</span> <span class="sr">/\.json$/</span>
+      <span class="n">response</span><span class="o">[</span><span class="s1">'Content-Type'</span><span class="o">]</span> <span class="o">=</span> <span class="s1">'application/json'</span>
+    <span class="k">else</span>
+      <span class="n">response</span><span class="o">[</span><span class="s1">'Content-Type'</span><span class="o">]</span> <span class="o">=</span> <span class="s1">'text/html'</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
 
   <span class="n">get</span> <span class="s2">"/"</span> <span class="k">do</span>
     <span class="s2">"Hello World"</span>
   <span class="k">end</span>
 
   <span class="n">get</span> <span class="s2">"/hello"</span> <span class="k">do</span>
-    <span class="n">redirect</span> <span class="s2">"/"</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">redirect</span> <span class="s2">"/"</span>
   <span class="k">end</span>
 
   <span class="n">get</span> <span class="s2">"/hello/:name"</span> <span class="k">do</span>
@@ -87,9 +107,12 @@
     <span class="n">render</span><span class="p">(</span><span class="s2">"views/layout.erb"</span><span class="p">)</span> <span class="p">{</span> <span class="n">render</span><span class="p">(</span><span class="s2">"views/welcome.erb"</span><span class="p">)</span> <span class="p">}</span>
   <span class="k">end</span>
 
+  <span class="n">get</span> <span class="s2">"/protected"</span> <span class="k">do</span>
+    <span class="s2">"Protected area!!!"</span>
+  <span class="k">end</span>
+
   <span class="n">get</span> <span class="s2">"/users/:id.json"</span> <span class="k">do</span>
     <span class="vi">@user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="s1">'id'</span><span class="o">]</span><span class="p">)</span>
-    <span class="n">response</span><span class="o">[</span><span class="s2">"Content-Type"</span><span class="o">]</span> <span class="o">=</span> <span class="s2">"application/json"</span>
     <span class="n">halt</span> <span class="mi">404</span> <span class="k">unless</span> <span class="vi">@user</span>
     <span class="no">UserSerializer</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="vi">@user</span><span class="p">)</span><span class="o">.</span><span class="n">to_json</span>
   <span class="k">end</span>
@@ -99,41 +122,59 @@
   <span class="k">end</span>
 
   <span class="n">map</span> <span class="s2">"/nancy"</span> <span class="k">do</span>
-    <span class="n">run</span> <span class="no">AnotherNancyApp</span>
+    <span class="n">run</span> <span class="no">AnotherNancyApp</span><span class="o">.</span><span class="n">new</span>
   <span class="k">end</span>
 <span class="k">end</span>
-</pre>
-</div>
-
+</pre></div>
 
 <p>To run it, you can create a <code>config.ru</code> file:</p>
 
-<div class="highlight">
-<pre><span class="c1"># config.ru</span>
+<div class="highlight highlight-ruby"><pre><span class="c1"># config.ru</span>
 <span class="nb">require</span> <span class="s2">"./hello"</span>
 
-<span class="n">run</span> <span class="no">Hello</span>
-</pre>
-</div>
-
+<span class="n">run</span> <span class="no">Hello</span><span class="o">.</span><span class="n">new</span>
+</pre></div>
 
 <p>You can now run <code>rackup</code> and enjoy what you have just created.</p>
 
 <p>Check examples folder for a detailed example.</p>
 
-<h2>Features</h2>
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
+<li> Very fast</li>
 <li> "Sinatra-like" routes: support for get, post, put, patch, delete, options, head</li>
-<li> Template rendering and caching through Tilt</li>
+<li> Template rendering and caching through Tilt or ERB from stdlib</li>
+<li> Set basic filters/callbacks with the before/after methods</li>
 <li> Include middlewares with the use method</li>
 <li> Mount rack apps with the map method</li>
 <li> Sessions through Rack::Session</li>
 <li> Halt execution at any point using Ruby's throw/catch mechanism</li>
 <li> Thread-safe</li>
-</ul><h2>Version history</h2>
+</ul><h2>
+<a name="version-history" class="anchor" href="#version-history"><span class="octicon octicon-link"></span></a>Version history</h2>
 
-<h3>0.2.0 (April 12, 2012)</h3>
+<h3>
+<a name="040-unreleased" class="anchor" href="#040-unreleased"><span class="octicon octicon-link"></span></a>0.4.0 (unreleased)</h3>
+
+<ul>
+<li>  Added support for basic before/after filters</li>
+<li>  Added Nancy::BasicRender for rendering of templates using <code>ERB</code> from stdlib</li>
+<li>  Refactored full code to set proper accessors for all methods</li>
+<li>  Removed Nancy::Base.call, only instances can be used to run apps</li>
+<li>  Removed redirect helper, use instead <code>response.redirect '/uri'</code>
+</li>
+<li>  Removed <code>tilt</code> dependency, to use Nancy::Render add it manually to app</li>
+<li>  Nancy::Base#halt can't be used with a <code>Rack::Response</code> object anymore</li>
+</ul><h3>
+<a name="030-octuber-3-2012" class="anchor" href="#030-octuber-3-2012"><span class="octicon octicon-link"></span></a>0.3.0 (Octuber 3, 2012)</h3>
+
+<ul>
+<li>  Removed unneccesary Thread accessors, use simple instance getters instead</li>
+<li>  Refactored Nancy::Base#halt</li>
+</ul><h3>
+<a name="020-april-12-2012" class="anchor" href="#020-april-12-2012"><span class="octicon octicon-link"></span></a>0.2.0 (April 12, 2012)</h3>
 
 <ul>
 <li>  Set PATH INFO to '/' when is blank</li>
@@ -141,7 +182,8 @@
 <li>  Added support for HEAD and OPTIONS HTTP verbs</li>
 <li>  Refactored Base.use to use a Rack::Builder internally</li>
 <li>  Added Base.map to redirect requests to Rack sub-apps</li>
-</ul><h3>0.1.0 (April 4, 2012)</h3>
+</ul><h3>
+<a name="010-april-4-2012" class="anchor" href="#010-april-4-2012"><span class="octicon octicon-link"></span></a>0.1.0 (April 4, 2012)</h3>
 
 <ul>
 <li>  Created a new <a href="http://guilleiguaran.github.com/nancy">Github Page</a> for the project</li>
@@ -151,11 +193,13 @@
 <li>  Moved render method from Nancy::Base to Nancy::Render module</li>
 <li>  Refactored Nancy::Base to evaluate code blocks at instance level</li>
 <li>  Fixed passing of render options to Tilt (thanks to <a href="https://github.com/lporras">lporras</a>)</li>
-</ul><h3>0.0.1 (March 20, 2012)</h3>
+</ul><h3>
+<a name="001-march-20-2012" class="anchor" href="#001-march-20-2012"><span class="octicon octicon-link"></span></a>0.0.1 (March 20, 2012)</h3>
 
 <ul>
 <li>  Initial Release</li>
-</ul><h2>Contributing</h2>
+</ul><h2>
+<a name="contributing" class="anchor" href="#contributing"><span class="octicon octicon-link"></span></a>Contributing</h2>
 
 <ol>
 <li>Fork it</li>
@@ -163,9 +207,10 @@
 <li>Commit your changes (<code>git commit -am 'Added some feature'</code>)</li>
 <li>Push to the branch (<code>git push origin my-new-feature</code>)</li>
 <li>Create new Pull Request</li>
-</ol><h2>Copyright</h2>
+</ol><h2>
+<a name="copyright" class="anchor" href="#copyright"><span class="octicon octicon-link"></span></a>Copyright</h2>
 
-<p>Copyright (c) 2012 Guillermo Iguaran. See LICENSE for
+<p>Copyright (c) 2012-2014 Guillermo Iguaran. See LICENSE for
 further details.</p>
       </section>
       <footer>
