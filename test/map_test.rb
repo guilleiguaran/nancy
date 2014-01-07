@@ -22,7 +22,7 @@ class MainApp < Nancy::Base
   end
 
   map "/nancy_app" do
-    run NancyApp
+    run NancyApp.new
   end
 
   map "/lambda_app" do
@@ -32,7 +32,7 @@ end
 
 class UseTest < Minitest::Test
   def setup
-    @request = Rack::MockRequest.new(MainApp)
+    @request = Rack::MockRequest.new(MainApp.new)
   end
 
   def test_main_app

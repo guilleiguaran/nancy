@@ -15,19 +15,18 @@ module Nancy
         end
       end
 
+      alias_method :new!, :new
+      def new(*args, &block)
+        builder.run new!(*args, &block)
+        builder
+      end
+
       def use(*args, &block)
-        @builder.use(*args, &block)
+        builder.use(*args, &block)
       end
 
       def map(*args, &block)
-        @builder.map(*args, &block)
-      end
-
-      def inherited(child)
-        child.instance_eval do
-          @builder = Rack::Builder.new
-          @builder.run(child.new)
-        end
+        builder.map(*args, &block)
       end
 
       def route_set
@@ -36,10 +35,6 @@ module Nancy
 
       def filters
         @filters ||= Hash.new
-      end
-
-      def call(env)
-        @builder.dup.call(env)
       end
 
       private
@@ -52,11 +47,19 @@ module Nancy
         end
         [%r{^#{pattern}$}, keys]
       end
+
+      def builder
+        @builder ||= Rack::Builder.new
+      end
     end
 
     attr_reader :request, :response, :params, :env
 
     def call(env)
+      dup.call!(env)
+    end
+
+    def call!(env)
       env['PATH_INFO'] = '/' if env['PATH_INFO'].empty?
       @request = Rack::Request.new(env)
       @response = Rack::Response.new
@@ -71,24 +74,24 @@ module Nancy
     end
 
     def halt(*res)
-      @response.status = res.detect{|x| x.is_a?(Fixnum) } || 200
-      @response.header.merge!(res.detect{|x| x.is_a?(Hash) } || {})
-      @response.body = [res.detect{|x| x.is_a?(String) } || ""]
-      throw :halt, @response
+      response.status = res.detect{|x| x.is_a?(Fixnum) } || 200
+      response.header.merge!(res.detect{|x| x.is_a?(Hash) } || {})
+      response.body = [res.detect{|x| x.is_a?(String) } || ""]
+      throw :halt, response
     end
 
     private
 
     def route_eval
       catch(:halt) do
-        self.class.route_set[@request.request_method].each do |matcher, block|
-          if match = @request.path_info.match(matcher[0])
+        self.class.route_set[request.request_method].each do |matcher, block|
+          if match = request.path_info.match(matcher[0])
             if (captures = match.captures) && !captures.empty?
               url_params = Hash[*matcher[1].zip(captures).flatten]
               @params = url_params.merge(params)
             end
             instance_exec(&self.class.filters[:before]) if self.class.filters[:before]
-            @response.write instance_eval(&block)
+            response.write instance_eval(&block)
             instance_exec(&self.class.filters[:after]) if self.class.filters[:after]
             return
           end

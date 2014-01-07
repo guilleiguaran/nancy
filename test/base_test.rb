@@ -42,12 +42,12 @@ class BaseTest < Minitest::Test
   end
 
   def app
-    TestApp
+    TestApp.new
   end
 
   def test_app_respond_with_call
     assert TestApp.new.respond_to?(:call)
-    request = Rack::MockRequest.new(TestApp)
+    request = Rack::MockRequest.new(TestApp.new)
     response = request.get('/')
     assert_equal 200, response.status
     assert_equal 'Hello World', response.body

@@ -23,7 +23,7 @@ end
 class UseTest < Minitest::Test
 
   def test_use
-    request = Rack::MockRequest.new(HelloApp)
+    request = Rack::MockRequest.new(HelloApp.new)
     response = request.get('/')
     assert_equal "dlroW olleH", response.body
   end

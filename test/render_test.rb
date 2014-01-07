@@ -27,7 +27,7 @@ class BaseTest < Minitest::Test
   end
 
   def app
-    TestApp
+    TestApp.new
   end
 
   def test_render
