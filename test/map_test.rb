@@ -30,7 +30,7 @@ class MainApp < Nancy::Base
   end
 end
 
-class UseTest < Minitest::Test
+class MapTest < Minitest::Test
   def setup
     @request = Rack::MockRequest.new(MainApp.new)
   end
