@@ -3,7 +3,7 @@ require 'erb'
 module Nancy
   module BasicRender
     def render(template)
-      ERB.new(template).result(binding)
+      ERB.new(File.open(template).read).result(binding)
     end
   end
 end
