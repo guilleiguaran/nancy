@@ -32,20 +32,6 @@ class Hello < Nancy::Base
   use Rack::Session::Cookie, secret: ENV['SECRET_TOKEN'] # for sessions
   include Nancy::Render # for templates
 
-  before do
-    if request.path_info == "/protected" && !session[:authenticated]
-      halt 401, "unauthorized"
-    end
-  end
-
-  after do
-    if request.path_info ~= /\.json$/
-      response['Content-Type'] = 'application/json'
-    else
-      response['Content-Type'] = 'text/html'
-    end
-  end
-
   get "/" do
     "Hello World"
   end
@@ -73,9 +59,23 @@ class Hello < Nancy::Base
     session[:authenticated] = true
     render("views/layout.erb") { render("views/welcome.erb") }
   end
+  
+  before do
+    if request.path_info == "/protected" && !session[:authenticated]
+      halt 401, "unauthorized"
+    end
+  end
 
   get "/protected" do
     "Protected area!!!"
+  end
+  
+  after do
+    if request.path_info ~= /\.json$/
+      response['Content-Type'] = 'application/json'
+    else
+      response['Content-Type'] = 'text/html'
+    end
   end
 
   get "/users/:id.json" do
