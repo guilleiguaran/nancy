@@ -27,10 +27,11 @@ Here's a simple application:
 ```ruby
 # hello.rb
 require "nancy"
+require "nancy/render"
 
 class Hello < Nancy::Base
   use Rack::Session::Cookie, secret: ENV['SECRET_TOKEN'] # for sessions
-  include Nancy::Render # for templates
+  include Nancy::Render
 
   get "/" do
     "Hello World"
@@ -128,6 +129,7 @@ Check examples folder for a detailed example.
 *   Refactored full code to set proper accessors for all methods
 *   Removed Nancy::Base.call, only instances can be used to run apps
 *   Removed redirect helper, use instead ``response.redirect '/uri'``
+*   Nancy::Render is not loaded automatically, "nancy/render" needs to be required
 *   Removed ``tilt`` dependency, to use Nancy::Render add it manually to app
 *   Nancy::Base#halt can't be used with a ``Rack::Response`` object anymore
 
