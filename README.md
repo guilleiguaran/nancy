@@ -133,7 +133,7 @@ Check examples folder for a detailed example.
 *   Removed ``tilt`` dependency, to use Nancy::Render add it manually to app
 *   Nancy::Base#halt can't be used with a ``Rack::Response`` object anymore
 
-### 0.3.0 (Octuber 3, 2012)
+### 0.3.0 (October 3, 2012)
 *   Removed unneccesary Thread accessors, use simple instance getters instead
 *   Refactored Nancy::Base#halt
 
