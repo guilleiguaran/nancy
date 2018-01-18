@@ -2,8 +2,8 @@
 require File.expand_path('../lib/nancy/version', __FILE__)
 
 Gem::Specification.new do |gem|
-  gem.authors       = ["Guillermo Iguaran"]
-  gem.email         = ["guilleiguaran@gmail.com"]
+  gem.authors       = ["Guillermo Iguaran", "Jon Raphaelson"]
+  gem.email         = ["guilleiguaran@gmail.com", "jon@accidental.cc"]
   gem.description   = %q{Sinatra's little daughter}
   gem.summary       = %q{Ruby Microframework inspired in Sinatra}
   gem.homepage      = "http://guilleiguaran.github.com/nancy"
@@ -16,6 +16,7 @@ Gem::Specification.new do |gem|
   gem.version       = Nancy::VERSION
 
   gem.add_dependency 'rack'
+  gem.add_dependency 'mustermann'
   gem.add_development_dependency 'tilt'
   gem.add_development_dependency 'erubis'
   gem.add_development_dependency 'minitest'

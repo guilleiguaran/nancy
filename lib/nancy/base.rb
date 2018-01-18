@@ -1,4 +1,5 @@
 require 'forwardable'
+require 'mustermann'
 require 'rack'
 
 module Nancy
@@ -37,12 +38,7 @@ module Nancy
       private
 
       def compile(pattern)
-        keys = []
-        pattern.gsub!(/(:\w+)/) do |match|
-          keys << $1[1..-1]
-          "([^/?#]+)"
-        end
-        [%r{^#{pattern}$}, keys]
+        Mustermann.new(pattern)
       end
 
       def builder
@@ -82,19 +78,19 @@ module Nancy
     def route_eval
       catch(:halt) do
         self.class.route_set[request.request_method].each do |matcher, block|
-          if match = request.path_info.match(matcher[0])
-            if (captures = match.captures) && !captures.empty?
-              url_params = Hash[*matcher[1].zip(captures).flatten]
-              @params = url_params.merge(params)
-            end
-            instance_exec(&self.class.filters[:before]) if self.class.filters[:before]
-            response.write instance_eval(&block)
-            instance_exec(&self.class.filters[:after]) if self.class.filters[:after]
-            return
-          end
+          next unless url_params = matcher.params(request.path_info)
+          @params = url_params.merge(params)
+          return action_eval(block)
         end
         halt 404
       end
     end
+
+    def action_eval(block)
+      instance_exec(&self.class.filters[:before]) if self.class.filters[:before]
+      response.write instance_eval(&block)
+      instance_exec(&self.class.filters[:after]) if self.class.filters[:after]
+    end
+
   end
 end
