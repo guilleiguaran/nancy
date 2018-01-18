@@ -16,8 +16,8 @@ module Nancy
       end
 
       %w(before after).each do |filter|
-        define_method(filter) do |&block|
-          filters[filter.to_sym] = block
+        define_method(filter) do |pattern = nil, &block|
+          filters[filter.to_sym] << [pattern && compile(pattern), block]
         end
       end
 
@@ -32,7 +32,7 @@ module Nancy
       end
 
       def filters
-        @filters ||= Hash.new
+        @filters ||= Hash.new { |hash, key| hash[key] = [] }
       end
 
       private
@@ -86,10 +86,27 @@ module Nancy
       end
     end
 
+    def filter_eval(key, reverse: false)
+      filters = self.class.filters[key]
+      filters = filters.reverse if reverse
+
+      filters.each do |matcher, block|
+        if matcher.nil?
+          instance_eval(&block)
+          next
+        end
+
+        if (p = matcher.params(request.path_info))
+          instance_exec(p, &block)
+          next
+        end
+      end
+    end
+
     def action_eval(block)
-      instance_exec(&self.class.filters[:before]) if self.class.filters[:before]
+      filter_eval(:before)
       response.write instance_eval(&block)
-      instance_exec(&self.class.filters[:after]) if self.class.filters[:after]
+      filter_eval(:after, reverse: true)
     end
 
   end
