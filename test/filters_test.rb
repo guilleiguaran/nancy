@@ -34,8 +34,15 @@ class FiltersTest < Minitest::Test
       response.write " 4"
     end
 
-    after do
-      response["Content-Type"] = "application/json"
+    after("/file/*.{+ext}") do |params|
+      case params['ext']
+      when 'json'
+        response['Content-Type'] = "application/json"
+      when 'html'
+        response['Content-Type'] = "text/html"
+      else
+        response['Content-Type'] = "application/octet-stream"
+      end
     end
 
     get "/" do
@@ -53,6 +60,9 @@ class FiltersTest < Minitest::Test
     get "/splat/*" do
       "root #{@root} path #{@path} ext #{@ext}"
     end
+
+    get "/file/*" do
+    end
   end
 
   def app
@@ -67,7 +77,6 @@ class FiltersTest < Minitest::Test
 
   def test_after_filter
     get '/'
-    assert_equal 'application/json', last_response.headers['Content-Type']
     assert_equal %q(1 2 {"message":"hello world"} 4 3), last_response.body
   end
 
@@ -79,5 +88,19 @@ class FiltersTest < Minitest::Test
   def test_before_filter_params_multiple_arguments
     get '/splat/foo/file.png'
     assert_equal "1 2 root foo path file ext png 4 3", last_response.body
+  end
+
+  def test_after_filter_params
+    get '/file/foobar.bin'
+    assert_equal 'application/octet-stream', last_response.headers['Content-Type']
+
+    get '/file/foobar.html'
+    assert_equal 'text/html', last_response.headers['Content-Type']
+
+    get '/file/foobar.json'
+    assert_equal 'application/json', last_response.headers['Content-Type']
+
+    get '/file/foobar/blah.bin'
+    assert_equal 'application/octet-stream', last_response.headers['Content-Type']
   end
 end
