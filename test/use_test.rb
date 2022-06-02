@@ -6,8 +6,7 @@ class Reverser
   end
 
   def call(env)
-    status, headers, response = @app.call(env)
-    body = response.body
+    status, headers, body = @app.call(env)
     [status, headers, [body.first.reverse]]
   end
 end
