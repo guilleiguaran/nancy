@@ -1,4 +1,4 @@
-require File.expand_path('../test_helper', __FILE__)
+require File.expand_path("../test_helper", __FILE__)
 
 class FiltersTest < Minitest::Test
   include Rack::Test::Methods
@@ -35,18 +35,20 @@ class FiltersTest < Minitest::Test
     end
 
     after("/file/*.{+ext}") do |params|
-      case params['ext']
-      when 'json'
-        response['Content-Type'] = "application/json"
-      when 'html'
-        response['Content-Type'] = "text/html"
+      type = case params["ext"]
+      when "json"
+        "application/json"
+      when "html"
+        "text/html"
       else
-        response['Content-Type'] = "application/octet-stream"
+        "application/octet-stream"
       end
+
+      response["Content-Type"] = type
     end
 
     get "/" do
-      %q({"message":"hello world"})
+      '{"message":"hello world"}'
     end
 
     get "/protected" do
@@ -70,37 +72,37 @@ class FiltersTest < Minitest::Test
   end
 
   def test_before_filter
-    get '/protected'
+    get "/protected"
     assert_equal 401, last_response.status
     assert_equal "unauthorized", last_response.body
   end
 
   def test_after_filter
-    get '/'
-    assert_equal %q(1 2 {"message":"hello world"} 4 3), last_response.body
+    get "/"
+    assert_equal '1 2 {"message":"hello world"} 4 3', last_response.body
   end
 
   def test_before_filter_params
-    get '/object/49'
+    get "/object/49"
     assert_equal "1 2 Looking at 49 4 3", last_response.body
   end
 
   def test_before_filter_params_multiple_arguments
-    get '/splat/foo/file.png'
+    get "/splat/foo/file.png"
     assert_equal "1 2 root foo path file ext png 4 3", last_response.body
   end
 
   def test_after_filter_params
-    get '/file/foobar.bin'
-    assert_equal 'application/octet-stream', last_response.headers['Content-Type']
+    get "/file/foobar.bin"
+    assert_equal "application/octet-stream", last_response.headers["Content-Type"]
 
-    get '/file/foobar.html'
-    assert_equal 'text/html', last_response.headers['Content-Type']
+    get "/file/foobar.html"
+    assert_equal "text/html", last_response.headers["Content-Type"]
 
-    get '/file/foobar.json'
-    assert_equal 'application/json', last_response.headers['Content-Type']
+    get "/file/foobar.json"
+    assert_equal "application/json", last_response.headers["Content-Type"]
 
-    get '/file/foobar/blah.bin'
-    assert_equal 'application/octet-stream', last_response.headers['Content-Type']
+    get "/file/foobar/blah.bin"
+    assert_equal "application/octet-stream", last_response.headers["Content-Type"]
   end
 end

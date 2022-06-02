@@ -1,8 +1,8 @@
-require File.expand_path('../test_helper', __FILE__)
+require File.expand_path("../test_helper", __FILE__)
 
 class RackApp
   def call(env)
-    [200, {'Content-Type' => 'text/html'}, ["Hello from RackApp"]]
+    [200, {"Content-Type" => "text/html"}, ["Hello from RackApp"]]
   end
 end
 
@@ -26,7 +26,7 @@ class MainApp < Nancy::Base
   end
 
   map "/lambda_app" do
-    run lambda{|env| [200, {'Content-Type' => 'text/html'}, ["Hello from LambdaApp"]]}
+    run lambda { |env| [200, {"Content-Type" => "text/html"}, ["Hello from LambdaApp"]] }
   end
 end
 
@@ -36,22 +36,22 @@ class MapTest < Minitest::Test
   end
 
   def test_main_app
-    response = @request.get('/')
+    response = @request.get("/")
     assert_equal "Hello from MainApp", response.body
   end
 
   def test_map_with_rack_app
-    response = @request.get('/rack_app')
+    response = @request.get("/rack_app")
     assert_equal "Hello from RackApp", response.body
   end
 
   def test_map_with_nancy_app
-    response = @request.get('/nancy_app')
+    response = @request.get("/nancy_app")
     assert_equal "Hello from NancyApp", response.body
   end
 
   def test_map_with_lambda
-    response = @request.get('/lambda_app')
+    response = @request.get("/lambda_app")
     assert_equal "Hello from LambdaApp", response.body
   end
 end

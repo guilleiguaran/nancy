@@ -1,5 +1,5 @@
-require File.expand_path('../test_helper', __FILE__)
-require 'nancy/basic_render'
+require File.expand_path("../test_helper", __FILE__)
+require "nancy/basic_render"
 
 class BasicRenderTest < Minitest::Test
   include Rack::Test::Methods
@@ -27,13 +27,13 @@ class BasicRenderTest < Minitest::Test
   end
 
   def test_render
-    get '/view'
+    get "/view"
     assert !last_response.body.include?("<html>")
     assert last_response.body.include?("Hello from view")
   end
 
   def test_render_with_layout
-    get '/layout'
+    get "/layout"
     assert last_response.body.include?("<html>")
     assert last_response.body.include?("Hello from view")
   end

@@ -1,0 +1,27 @@
+require:
+  - standard
+
+inherit_gem:
+  standard: config/base.yml
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - bin/**/*
+    - tmp/**/*
+    - vendor/**/*
+  TargetRubyVersion: 2.7
+
+# extra lines are sometimes very useful for clarity but sometimes obscure things
+# I want `beginning only except namespace and nested classes most of the time`
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+# don't freak out if there's aligned equals signs
+
+Layout/ExtraSpacing:
+  AllowForAlignment: true

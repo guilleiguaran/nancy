@@ -5,12 +5,12 @@ require "nancy/render"
 
 class MiniApp < Nancy::Base
   get("/") { "Hello from MiniApp" }
-  get("/:something") { params['something'] }
+  get("/:something") { params["something"] }
 end
 
 class App < Nancy::Base
   use Rack::Runtime
-  use Rack::Session::Cookie, secret: ENV['SECRET']
+  use Rack::Session::Cookie, secret: ENV["SECRET"]
   use Rack::Static, urls: ["/js"], root: "public"
   include Nancy::Render
 
@@ -19,17 +19,17 @@ class App < Nancy::Base
   end
 
   get "/hello/:name" do
-    "Hello #{params['name']}"
+    "Hello #{params["name"]}"
   end
 
   get "/:message/:name" do
-    @message = params['message']
-    @name = params['name']
+    @message = params["message"]
+    @name = params["name"]
     render "hello.erb"
   end
 
   post "/params/:params" do
-    "#{params}"
+    params.to_s
   end
 
   get "/redirect" do
@@ -38,7 +38,7 @@ class App < Nancy::Base
   end
 
   get "/session" do
-    "#{session['test']}"
+    session["test"].to_s
   end
 
   get "/set_session" do
@@ -64,7 +64,7 @@ class App < Nancy::Base
   end
 
   map "/rack" do
-    run lambda{|env| [200, {"Content-Type" => "text/html"}, ["PATH_INFO: #{env["PATH_INFO"]}"]]}
+    run lambda { |env| [200, {"Content-Type" => "text/html"}, ["PATH_INFO: #{env["PATH_INFO"]}"]] }
   end
 
   map "/nancy" do
