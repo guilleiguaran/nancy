@@ -8,7 +8,7 @@ _Sinatra's little daughter_
 
 Minimal Ruby microframework for web development inspired in [Sinatra](http://www.sinatrarb.com/) and [Cuba](https://github.com/soveran/cuba)
 
-Requires Ruby 3
+Requires Ruby 2.7 or greater.
 
 ## Installation
 
@@ -129,6 +129,10 @@ Check examples folder for a detailed example.
 
 ### 0.6.0 (unreleased)
 *   Now requires ruby 2.7; version contains fixes for modern ruby and rack
+
+### 0.5.0 (unreleased)
+*   Switches the routing backend to sinatra/mustermann, supporting wildcard routes,
+    optional parameters, etc.
 
 ### 0.4.0 (unreleased)
 *   Added support for basic before/after filters
