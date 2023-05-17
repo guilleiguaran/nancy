@@ -1,4 +1,4 @@
-require File.expand_path('../test_helper', __FILE__)
+require File.expand_path("../test_helper", __FILE__)
 
 class Reverser
   def initialize(app)
@@ -6,8 +6,7 @@ class Reverser
   end
 
   def call(env)
-    status, headers, response = @app.call(env)
-    body = response.body
+    status, headers, body = @app.call(env)
     [status, headers, [body.first.reverse]]
   end
 end
@@ -21,10 +20,9 @@ class HelloApp < Nancy::Base
 end
 
 class UseTest < Minitest::Test
-
   def test_use
     request = Rack::MockRequest.new(HelloApp.new)
-    response = request.get('/')
+    response = request.get("/")
     assert_equal "dlroW olleH", response.body
   end
 end

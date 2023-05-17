@@ -1,9 +1,10 @@
-require 'erb'
+require "erb"
 
 module Nancy
   module BasicRender
     def render(template)
-      ERB.new(File.open(template).read).result(binding)
+      template = File.read(template)
+      ERB.new(template).result(binding)
     end
   end
 end

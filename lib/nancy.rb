@@ -1,4 +1,4 @@
-require 'nancy/base'
+require "nancy/base"
 
 module Nancy
 end

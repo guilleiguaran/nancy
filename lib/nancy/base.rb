@@ -1,6 +1,6 @@
-require 'forwardable'
-require 'mustermann'
-require 'rack'
+require "forwardable"
+require "mustermann"
+require "rack"
 
 module Nancy
   class Base
@@ -9,21 +9,21 @@ module Nancy
 
       def_delegators :builder, :map, :use
 
-      %w(GET POST PATCH PUT DELETE HEAD OPTIONS).each do |verb|
+      %w[GET POST PATCH PUT DELETE HEAD OPTIONS].each do |verb|
         define_method(verb.downcase) do |pattern, &block|
           route_set[verb] << [compile(pattern), block]
         end
       end
 
-      %w(before after).each do |filter|
+      %w[before after].each do |filter|
         define_method(filter) do |pattern = nil, &block|
           filters[filter.to_sym] << [pattern && compile(pattern), block]
         end
       end
 
       alias_method :new!, :new
-      def new(*args, &block)
-        builder.run new!(*args, &block)
+      def new(...)
+        builder.run new!(...)
         builder
       end
 
@@ -53,7 +53,7 @@ module Nancy
     end
 
     def call!(env)
-      env['PATH_INFO'] = '/' if env['PATH_INFO'].empty?
+      env["PATH_INFO"] = "/" if env["PATH_INFO"].empty?
       @request = Rack::Request.new(env)
       @response = Rack::Response.new
       @params = request.params
@@ -67,9 +67,9 @@ module Nancy
     end
 
     def halt(*res)
-      response.status = res.detect{|x| x.is_a?(Fixnum) } || 200
-      response.header.merge!(res.detect{|x| x.is_a?(Hash) } || {})
-      response.body = [res.detect{|x| x.is_a?(String) } || ""]
+      response.status = res.detect { |x| x.is_a?(Integer) } || 200
+      response.header.merge!(res.detect { |x| x.is_a?(Hash) } || {})
+      response.body = [res.detect { |x| x.is_a?(String) } || ""]
       throw :halt, response
     end
 
@@ -78,7 +78,9 @@ module Nancy
     def route_eval
       catch(:halt) do
         self.class.route_set[request.request_method].each do |matcher, block|
-          next unless url_params = matcher.params(request.path_info)
+          url_params = matcher.params(request.path_info)
+          next unless url_params
+
           @params = url_params.merge(params)
           return action_eval(block)
         end
@@ -108,6 +110,5 @@ module Nancy
       response.write instance_eval(&block)
       filter_eval(:after, reverse: true)
     end
-
   end
 end

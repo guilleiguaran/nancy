@@ -3,6 +3,7 @@
 .bundle
 .config
 .yardoc
+bin
 Gemfile.lock
 InstalledFiles
 _yardoc
@@ -11,7 +12,7 @@ doc/
 lib/bundler/man
 pkg
 rdoc
-spec/reports
 test/tmp
 test/version_tmp
 tmp
+.vscode
