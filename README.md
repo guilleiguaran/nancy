@@ -49,6 +49,10 @@ class Hello < Nancy::Base
     "Hello #{params['name']}"
   end
 
+  get "/files/:root/*path" do
+    "From #{params['root']}, download #{params['path']}"
+  end
+
   get "/template" do
     @message = "Hello world"
     render("views/hello.erb")
@@ -61,18 +65,17 @@ class Hello < Nancy::Base
     render("views/layout.erb") { render("views/welcome.erb") }
   end
   
-  before do
-    if request.path_info == "/protected" && !session[:authenticated]
-      halt 401, "unauthorized"
-    end
+  before("/protected") do
+    halt 401, "unauthorized" unless session[:authenticated]
   end
 
   get "/protected" do
     "Protected area!!!"
   end
   
-  after do
-    if request.path_info ~= /\.json$/
+  after(".{+extension}") do |params|
+    case params['extension']
+    when 'json'
       response['Content-Type'] = 'application/json'
     else
       response['Content-Type'] = 'text/html'

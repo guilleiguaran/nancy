@@ -14,6 +14,14 @@ class BaseTest < Minitest::Test
       "Hello #{params['name']}"
     end
 
+    get "/splat/*string" do
+      "Splat #{params['string']}"
+    end
+
+    get "/optional(/:id)?" do
+      "Optional #{params['id'] || 'not provided'}"
+    end
+
     post "/hello" do
       "Hello #{params['name']}"
     end
@@ -56,6 +64,22 @@ class BaseTest < Minitest::Test
   def test_url_params
     get '/hello/user'
     assert_equal 'Hello user', last_response.body
+  end
+
+  def test_splat_params
+    get '/splat/foo/bar/baz'
+    assert_equal 'Splat foo/bar/baz', last_response.body
+  end
+
+  def test_optional_params
+    get '/optional'
+    assert_equal 'Optional not provided', last_response.body
+
+    get '/optional/4'
+    assert_equal 'Optional 4', last_response.body
+
+    get '/optional/'
+    assert_equal 404, last_response.status
   end
 
   def test_post_params
