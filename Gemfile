@@ -9,7 +9,7 @@ gemspec
 gem "minitest"
 gem "rack-test"
 gem "rake"
-gem "standard" # rubocop ruleset
+gem "standard", ">= 1" # rubocop ruleset
 gem "rubocop"
 gem "rubocop-minitest"
 gem "rubocop-rake"
