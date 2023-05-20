@@ -68,7 +68,7 @@ module Nancy
 
     def halt(*res)
       response.status = res.detect { |x| x.is_a?(Integer) } || 200
-      response.header.merge!(res.detect { |x| x.is_a?(Hash) } || {})
+      response.headers.merge!(res.detect { |x| x.is_a?(Hash) } || {})
       response.body = [res.detect { |x| x.is_a?(String) } || ""]
       throw :halt, response
     end
