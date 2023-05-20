@@ -28,13 +28,15 @@ class BasicRenderTest < Minitest::Test
 
   def test_render
     get "/view"
-    assert !last_response.body.include?("<html>")
-    assert last_response.body.include?("Hello from view")
+
+    refute_includes last_response.body, "<html>"
+    assert_includes last_response.body, "Hello from view"
   end
 
   def test_render_with_layout
     get "/layout"
-    assert last_response.body.include?("<html>")
-    assert last_response.body.include?("Hello from view")
+
+    assert_includes last_response.body, "<html>"
+    assert_includes last_response.body, "Hello from view"
   end
 end
