@@ -1,10 +1,13 @@
 require File.expand_path("../test_helper", __FILE__)
 
+require "rack/session"
+require "securerandom"
+
 class BaseTest < Minitest::Test
   include Rack::Test::Methods
 
   class TestApp < Nancy::Base
-    use Rack::Session::Cookie, secret: "secret"
+    use Rack::Session::Cookie, secret: SecureRandom.hex(64)
 
     get "/" do
       "Hello World"

@@ -16,5 +16,6 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = ">= 2.7", "< 4"
 
   gem.add_dependency "rack"
+  gem.add_dependency "rack-session"
   gem.add_dependency "mustermann"
 end
