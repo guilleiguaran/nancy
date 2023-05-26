@@ -1,5 +1,7 @@
 require:
   - standard
+  - rubocop-minitest
+  - rubocop-rake
 
 inherit_gem:
   standard: config/base.yml
@@ -25,3 +27,11 @@ Layout/EmptyLinesAroundModuleBody:
 
 Layout/ExtraSpacing:
   AllowForAlignment: true
+
+# minitest is really picky about newlines
+
+Minitest/EmptyLineBeforeAssertionMethods:
+  Enabled: false
+
+Minitest/MultipleAssertions:
+  Max: 5

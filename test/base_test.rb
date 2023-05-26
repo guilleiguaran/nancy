@@ -54,9 +54,13 @@ class BaseTest < Minitest::Test
   end
 
   def test_app_respond_with_call
-    assert TestApp.new.respond_to?(:call)
+    assert_respond_to TestApp.new, :call
+  end
+
+  def test_basic_call
     request = Rack::MockRequest.new(TestApp.new)
     response = request.get("/")
+
     assert_equal 200, response.status
     assert_equal "Hello World", response.body
   end
@@ -95,7 +99,7 @@ class BaseTest < Minitest::Test
   def test_redirect
     get "/redirect"
     follow_redirect!
-    assert last_response.body.include?("Redirected")
+    assert_includes last_response.body, "Redirected"
   end
 
   def test_halting

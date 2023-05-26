@@ -1,6 +1,7 @@
 #!/usr/bin/env rake
 require "rake/testtask"
 
+desc "run tests"
 task :test do
   Dir.chdir("test")
 end
